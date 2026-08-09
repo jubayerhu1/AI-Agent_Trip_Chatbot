@@ -26,3 +26,10 @@ pycountry==26.2.16
 fastapi==0.136.3
 uvicorn==0.48.0
 jinja2==3.1.6
+
+#======================================
+groq api key
+
+aviation stack
+
+Internet search https://app.tavily.com/
