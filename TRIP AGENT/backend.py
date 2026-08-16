@@ -1,15 +1,17 @@
 import os 
-import certifi
+import certifi # path error solve the problem
 from dotenv import load_dotenv
-
+# keys loads 
 load_dotenv()
-
+# path errro solve the problem
 os.environ["SSL_CERT_FILE"] = certifi.where()
 os.environ["REQUESTS_CA_BUNDLE"] = certifi.where()
 
 from typing import TypedDict, Annotated
 import operator
-import uuid
+# generate unique id
+import uuid 
+# Make agent to 
 from langgraph.graph import StateGraph, START, END
 from langchain_core.messages import (
     AnyMessage,
@@ -17,13 +19,18 @@ from langchain_core.messages import (
     AIMessage,
     SystemMessage,
 )
+# Model of Groq
 from langchain_groq import ChatGroq
+# Flight tool
 from tools.flight_tool import search_flights
+#
 from tools.tavily_tool import tavily_search
+# 
 from langgraph.checkpoint.sqlite import SqliteSaver
+#sql state data base 
 import sqlite3
-
-
+#================================================
+# condition define 
 GROQ_API_KEY = os.getenv("GROQ_API_KEY")
 if not GROQ_API_KEY:
     raise ValueError("GROQ_API_KEY is missing. Please add it to your .env file.")
@@ -38,15 +45,18 @@ llm = ChatGroq(
     model="llama-3.3-70b-versatile",
     api_key=GROQ_API_KEY
 )
+# Test the llm does it work ?
+# response = llm.invoke('Hello how are your')
 
 
 
 # =========================
 # State
 # =========================
+# variable declear
 
 class TravelState(TypedDict):
-    messages: Annotated[list[AnyMessage], operator.add]
+    messages: Annotated[list[AnyMessage], operator.add] # conversation will added by .add
     user_query: str
     flight_results: str
     hotel_results: str
@@ -199,7 +209,7 @@ graph.add_edge("itinerary_agent", "final_agent")
 graph.add_edge("final_agent", END)
 
 
-
+# data base return travel graph
 travel_graph = graph.compile(checkpointer=checkpoint)
 
 
@@ -249,6 +259,6 @@ def run_travel_agent(user_input: str, thread_id: str | None = None):
 
 
 
-response = run_travel_agent("Plan a 7 days Japan trip from Bangladesh")
+#response = run_travel_agent("Plan a 7 days Japan trip from Bangladesh")
 
-print(response)
+#print(response)
