@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>TravelAI - AI Travel Planner</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', path='css/style.css') }}">
+</head>
+
+<body>
+
+<header class="navbar">
+    <div class="logo">
+        <span>✈️</span>
+        TravelAI
+    </div>
+
+    <div class="nav-links">
+        <a href="#">Home</a>
+        <a href="#results">My Trips</a>
+        <a href="#about">About</a>
+    </div>
+</header>
+
+
+<main>
+
+    <!-- HERO -->
+
+    <section class="hero">
+
+        <div class="hero-content">
+
+            <span class="badge">
+                ✨ AI Powered Travel Planner
+            </span>
+
+            <h1>
+                Plan your next
+                <span>adventure</span>
+            </h1>
+
+            <p>
+                Tell our AI where you want to go and let it find
+                flights, hotels, create an itinerary, and estimate
+                your travel budget.
+            </p>
+
+            <form id="travelForm" class="search-box">
+
+                <div class="input-area">
+
+                    <span class="input-icon">🌍</span>
+
+                    <input
+                        type="text"
+                        id="userQuery"
+                        placeholder="Example: Plan a 7 days Japan trip from Bangladesh"
+                        required
+                    >
+
+                </div>
+
+                <button type="submit" id="planButton">
+                    <span>Plan My Trip</span>
+                    <span>→</span>
+                </button>
+
+            </form>
+
+            <div class="quick-search">
+
+                <span>Try:</span>
+
+                <button onclick="setQuery('Plan a 7 days Japan trip from Bangladesh')">
+                    🇯🇵 Japan
+                </button>
+
+                <button onclick="setQuery('Plan a 5 days trip to Dubai from Bangladesh')">
+                    🇦🇪 Dubai
+                </button>
+
+                <button onclick="setQuery('Plan a 7 days trip to Italy from USA')">
+                    🇮🇹 Italy
+                </button>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- LOADING -->
+
+    <section id="loading" class="loading hidden">
+
+        <div class="loader"></div>
+
+        <h2>Planning your trip...</h2>
+
+        <p id="loadingText">
+            Our AI agents are working on your travel plan.
+        </p>
+
+        <div class="agent-progress">
+
+            <div class="agent">
+                <span>✈️</span>
+                <div>
+                    <strong>Flight Agent</strong>
+                    <small>Searching flights</small>
+                </div>
+            </div>
+
+            <div class="agent">
+                <span>🏨</span>
+                <div>
+                    <strong>Hotel Agent</strong>
+                    <small>Finding hotels</small>
+                </div>
+            </div>
+
+            <div class="agent">
+                <span>🗓️</span>
+                <div>
+                    <strong>Itinerary Agent</strong>
+                    <small>Creating itinerary</small>
+                </div>
+            </div>
+
+            <div class="agent">
+                <span>🤖</span>
+                <div>
+                    <strong>AI Assistant</strong>
+                    <small>Preparing recommendations</small>
+                </div>
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- RESULTS -->
+
+    <section id="results" class="results hidden">
+
+        <div class="results-header">
+
+            <div>
+                <span class="badge">✨ Your AI Travel Plan</span>
+
+                <h2>Your Trip</h2>
+
+                <p id="tripQuery"></p>
+            </div>
+
+            <button class="new-trip" onclick="newTrip()">
+                + New Trip
+            </button>
+
+        </div>
+
+
+        <!-- SUMMARY CARDS -->
+
+        <div class="summary-grid">
+
+            <div class="summary-card">
+                <div class="summary-icon">✈️</div>
+                <div>
+                    <small>Flights</small>
+                    <strong>Available</strong>
+                </div>
+            </div>
+
+            <div class="summary-card">
+                <div class="summary-icon">🏨</div>
+                <div>
+                    <small>Hotels</small>
+                    <strong>Suggestions</strong>
+                </div>
+            </div>
+
+            <div class="summary-card">
+                <div class="summary-icon">🗓️</div>
+                <div>
+                    <small>Itinerary</small>
+                    <strong>AI Generated</strong>
+                </div>
+            </div>
+
+            <div class="summary-card">
+                <div class="summary-icon">🤖</div>
+                <div>
+                    <small>AI Calls</small>
+                    <strong id="llmCalls">0</strong>
+                </div>
+            </div>
+
+        </div>
+
+
+        <!-- MAIN RESULTS -->
+
+        <div class="results-layout">
+
+            <div class="main-result">
+
+                <!-- AI ANSWER -->
+
+                <div class="result-card">
+
+                    <div class="card-header">
+                        <div>
+                            <span class="card-icon">🤖</span>
+                            <div>
+                                <h3>AI Travel Recommendations</h3>
+                                <p>Personalized plan generated by AI</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="answer" class="answer"></div>
+
+                </div>
+
+
+                <!-- ITINERARY -->
+
+                <div class="result-card">
+
+                    <div class="card-header">
+
+                        <div>
+                            <span class="card-icon">🗓️</span>
+
+                            <div>
+                                <h3>Day-by-Day Itinerary</h3>
+                                <p>Your personalized travel schedule</p>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div id="itinerary" class="result-content"></div>
+
+                </div>
+
+            </div>
+
+
+            <!-- SIDEBAR -->
+
+            <aside class="sidebar">
+
+                <!-- FLIGHTS -->
+
+                <div class="result-card">
+
+                    <div class="card-header">
+
+                        <div>
+                            <span class="card-icon">✈️</span>
+
+                            <div>
+                                <h3>Flights</h3>
+                                <p>Flight search results</p>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div id="flightResults" class="small-result"></div>
+
+                </div>
+
+
+                <!-- HOTELS -->
+
+                <div class="result-card">
+
+                    <div class="card-header">
+
+                        <div>
+                            <span class="card-icon">🏨</span>
+
+                            <div>
+                                <h3>Hotels</h3>
+                                <p>Recommended stays</p>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div id="hotelResults" class="small-result"></div>
+
+                </div>
+
+            </aside>
+
+        </div>
+
+    </section>
+
+</main>
+
+
+<footer id="about">
+
+    <div class="footer-content">
+
+        <div>
+            <strong>✈️ TravelAI</strong>
+            <p>
+                Your AI-powered travel planning assistant.
+            </p>
+        </div>
+
+        <div>
+            <p>Powered by AI Agents</p>
+        </div>
+
+    </div>
+
+</footer>
+
+
+<script src="{{ url_for('static', path='js/app.js') }}"></script>
+
+</body>
+</html>
