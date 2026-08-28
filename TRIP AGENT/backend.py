@@ -80,7 +80,13 @@ def flight_agent(state: TravelState):
         ],
         "llm_calls": state.get("llm_calls", 0) + 1
     }
+#================
+# my function created
+#=========================
 
+def fligh_agent(state: TravelState):
+    query = state["user_query"]
+    flight_data = get_flight_info(query)
 
 
 # =========================
